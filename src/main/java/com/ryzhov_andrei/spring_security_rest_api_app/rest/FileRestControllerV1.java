@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,6 +29,7 @@ public class FileRestControllerV1 {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('files:read')")
     public ResponseEntity<FileDto> getFileById(@PathVariable Long id) {
         File file = fileService.getById(id);
         if (file == null) {
@@ -38,8 +40,9 @@ public class FileRestControllerV1 {
     }
 
     @GetMapping("/{name}")
+    @PreAuthorize("hasAuthority('files:read')")
     public ResponseEntity<FileDto> getFileByName(@PathVariable String name) {
-        File file = fileService.findByFilename(name);
+        File file = fileService.findByFileName(name);
         if (file == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
@@ -48,6 +51,7 @@ public class FileRestControllerV1 {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('files:read')")
     public ResponseEntity<List<FileDto>> getAll() {
         List<File> files = fileService.getAll();
         if (files.isEmpty()) {
@@ -58,6 +62,7 @@ public class FileRestControllerV1 {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('files:write')")
     public ResponseEntity delete(@PathVariable Long id) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -71,13 +76,15 @@ public class FileRestControllerV1 {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('files:write')")
     public ResponseEntity<FileDto> upload(@RequestBody @NonNull FileDto fileDto) {
-        fileService.uploadFile(fileDto.toFile());
+        fileService.upload(fileDto.toFile());
         return new ResponseEntity("File Uploaded Successfully",HttpStatus.OK);
     }
 
 
     @PutMapping
+    @PreAuthorize("hasAuthority('files:write')")
     public ResponseEntity<?> download(@RequestBody @NonNull FileDto fileDto) {
         if (StringUtils.hasText(fileDto.getFilename())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name is missing");
@@ -88,9 +95,7 @@ public class FileRestControllerV1 {
         headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
         headers.add("Pragma", "no-cache");
         headers.add("Expires", "0");
-
         InputStreamResource resource = new InputStreamResource(fileService.download(fileDto.toFile()));
-
         return new ResponseEntity<>(resource, headers, HttpStatus.OK);
 //                ResponseEntity.ok()
 //                .headers(headers)

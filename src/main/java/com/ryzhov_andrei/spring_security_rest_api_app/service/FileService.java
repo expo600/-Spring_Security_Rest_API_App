@@ -3,10 +3,14 @@ package com.ryzhov_andrei.spring_security_rest_api_app.service;
 import com.ryzhov_andrei.spring_security_rest_api_app.model.File;
 
 import java.io.InputStream;
+import java.util.Optional;
 
-public interface FileService extends GenericService<File,Long>{
-    File uploadFile(File file);
+public interface FileService {
+    void upload(File file);
     InputStream download (File file);
-    File findByFilename(String filename);
+    Optional<String> listFiles();
+    void deleteFile(String fileName);
+    File findByFileName(String name);
+    File findById(Long id);
 
 }

@@ -1,9 +1,7 @@
 package com.ryzhov_andrei.spring_security_rest_api_app.service.impl;
 
-import com.ryzhov_andrei.spring_security_rest_api_app.model.Role;
 import com.ryzhov_andrei.spring_security_rest_api_app.model.Status;
 import com.ryzhov_andrei.spring_security_rest_api_app.model.User;
-import com.ryzhov_andrei.spring_security_rest_api_app.repository.RoleRepository;
 import com.ryzhov_andrei.spring_security_rest_api_app.repository.UserRepository;
 import com.ryzhov_andrei.spring_security_rest_api_app.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,25 +9,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserServiceImpl(
-            UserRepository userRepository,
-            RoleRepository roleRepository,
-            BCryptPasswordEncoder passwordEncoder
-    ) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -52,7 +44,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findByUsername(String username) {
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.findByUserName(username);
         if (user == null) {
             log.warn("FindByName - no User find by name: {}", username);
         }
@@ -61,13 +53,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findByEmail(String email) {
+         Optional<User> user = userRepository.findByEmail(email);
+        if (user == null) {
+            log.warn("FindByName - no User find by name: {}", email);
+        }
+        log.info("Find User by name: {}", email);
+        return user;
+    }
+
+    @Override
     public User create(User user) {
-        Role roleUser = roleRepository.findByRoleName("USER");
-        List<Role> userRoles = new ArrayList<>();
-        userRoles.add(roleUser);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        user.setRoles(userRoles);
-        user.setStatus(Status.ACTIVE);
+        User newUser = new User();
+        newUser.setUserName(user.getUserName());
+        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        newUser.setRole(user.getRole());
+        newUser.setStatus(Status.ACTIVE);
         User registeredUser = userRepository.save(user);
         log.info("Create - user: {} successfully registered", registeredUser);
         return registeredUser;

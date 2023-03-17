@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "files")
 public class File extends BaseEntity {
     @Column(name = "file_name")
-    private String filename;
+    private String fileName;
     @Column(name = "location")
     private String location;
 }

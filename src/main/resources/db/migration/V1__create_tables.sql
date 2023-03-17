@@ -37,22 +37,22 @@ CREATE TABLE IF NOT EXISTS events
 );
 
 
-CREATE TABLE IF NOT EXISTS roles
-(
-    id          BIGINT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name        VARCHAR(255)    NOT NULL,
-    created         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-    updated         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-    status      VARCHAR(25)     NOT NULL DEFAULT 'ACTIVE'
-);
+# CREATE TABLE IF NOT EXISTS roles
+# (
+#     id          BIGINT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+#     name        VARCHAR(255)    NOT NULL,
+#     created         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+#     updated         TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+#     status      VARCHAR(25)     NOT NULL DEFAULT 'ACTIVE'
+# );
 
 
-CREATE TABLE IF NOT EXISTS user_roles
-(
-    user_id BIGINT NOT NULL,
-    role_id BIGINT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE CASCADE,
-    UNIQUE (user_id, role_id)
-);
+# CREATE TABLE IF NOT EXISTS user_roles
+# (
+#     user_id BIGINT NOT NULL,
+#     role_id BIGINT NOT NULL,
+#     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+#     FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE CASCADE,
+#     UNIQUE (user_id, role_id)
+# );
 
