@@ -16,15 +16,17 @@ import java.util.Optional;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private  UserRepository userRepository;
+    private  BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+    public UserServiceImpl(UserRepository userRepository) {
 
+    }
     @Override
     public User getById(Long id) {
         User user = userRepository.findById(id).orElse(null);

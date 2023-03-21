@@ -3,7 +3,6 @@ package com.ryzhov_andrei.spring_security_rest_api_app.security.jwt;
 import com.ryzhov_andrei.spring_security_rest_api_app.model.Role;
 import com.ryzhov_andrei.spring_security_rest_api_app.model.Status;
 import com.ryzhov_andrei.spring_security_rest_api_app.model.User;
-import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -18,23 +17,23 @@ public final class JwtUserFactory {
     }
 
     public static JwtUser create(User user) {
+        List<Role> roles = new ArrayList<>();
+        roles.add(user.getRole());
         return new JwtUser(
                 user.getId(),
-                user.getUsername(),
+                user.getUserName(),
                 user.getEmail(),
                 user.getPassword(),
                 user.getStatus().equals(Status.ACTIVE),
                 user.getUpdated(),
-                user.getRole().getAuthorities()
-//                mapToGrantedAuthorities(new ArrayList<>(user.getRoles()))
-
+                mapToGrantedAuthorities(roles)
         );
     }
 
     private static List<GrantedAuthority> mapToGrantedAuthorities(List<Role> userRoles) {
         return userRoles.stream()
                 .map(role ->
-                        new SimpleGrantedAuthority(role.getPermissions().toString())
+                        new SimpleGrantedAuthority(role.toString())
                 ).collect(Collectors.toList());
     }
 }

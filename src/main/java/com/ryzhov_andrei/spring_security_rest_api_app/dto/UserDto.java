@@ -27,7 +27,7 @@ public class UserDto {
 
             User user = new User();
             user.setId(id);
-            user.setUsername(username);
+            user.setUserName(username);
             user.setEmail(email);
             return user;
         }
@@ -41,7 +41,7 @@ public class UserDto {
                 user.getEventList().stream().map(EventDto::fromEvent).collect(Collectors.toList());
             UserDto userDto = new UserDto();
             userDto.setId(user.getId());
-            userDto.setUsername(user.getUsername());
+            userDto.setUsername(user.getUserName());
             userDto.setEmail(user.getEmail());
             return userDto;
     }

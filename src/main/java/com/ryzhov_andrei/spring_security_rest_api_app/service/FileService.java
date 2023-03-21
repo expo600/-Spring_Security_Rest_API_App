@@ -10,7 +10,4 @@ public interface FileService {
     InputStream download (File file);
     Optional<String> listFiles();
     void deleteFile(String fileName);
-    File findByFileName(String name);
-    File findById(Long id);
-
 }

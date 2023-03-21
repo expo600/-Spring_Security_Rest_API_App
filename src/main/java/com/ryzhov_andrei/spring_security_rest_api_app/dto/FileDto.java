@@ -21,7 +21,7 @@ public class FileDto {
     public File toFile() {
         File file = new File();
         file.setId(id);
-        file.setFilename(filename);
+        file.setFileName(filename);
         file.setLocation(location);
         return file;
     }
@@ -32,7 +32,7 @@ public class FileDto {
         }
         FileDto fileDto = new FileDto();
         fileDto.setId(file.getId());
-        fileDto.setFilename(file.getFilename());
+        fileDto.setFilename(file.getFileName());
         fileDto.setLocation(file.getLocation());
         return fileDto;
     }

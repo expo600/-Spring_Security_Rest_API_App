@@ -22,7 +22,6 @@ public class UserRestControllerV1 {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('users:read')")
     public ResponseEntity<UserDto> getUserById(@PathVariable Long id) {
         User user = userService.getById(id);
         if (user == null) {
@@ -33,7 +32,6 @@ public class UserRestControllerV1 {
     }
 
     @GetMapping("/{name}")
-    @PreAuthorize("hasAuthority('users:read')")
     public ResponseEntity<UserDto> getUserByName(@PathVariable String name) {
         User user = userService.findByUsername(name);
         if (user == null) {
@@ -44,7 +42,6 @@ public class UserRestControllerV1 {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('users:read')")
     public ResponseEntity<List<UserDto>> getAll() {
         List<User> users = userService.getAll();
         if (users.isEmpty()) {
@@ -55,7 +52,6 @@ public class UserRestControllerV1 {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('users:write')")
     public ResponseEntity<User> save(@RequestBody User user) {
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -65,7 +61,6 @@ public class UserRestControllerV1 {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('users:write')")
     public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user) {
         if (id == null || user == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -75,7 +70,6 @@ public class UserRestControllerV1 {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('users:write')")
     public ResponseEntity delete(@PathVariable Long id) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

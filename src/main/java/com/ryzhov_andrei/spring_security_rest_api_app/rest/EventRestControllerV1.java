@@ -6,6 +6,7 @@ import com.ryzhov_andrei.spring_security_rest_api_app.model.Event;
 import com.ryzhov_andrei.spring_security_rest_api_app.model.User;
 import com.ryzhov_andrei.spring_security_rest_api_app.repository.EventRepository;
 import com.ryzhov_andrei.spring_security_rest_api_app.service.EventService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,13 +21,13 @@ public class EventRestControllerV1 {
     private final EventService eventService;
     private final EventRepository eventRepository;
 
+@Autowired
     public EventRestControllerV1(EventService eventService, EventRepository eventRepository) {
         this.eventService = eventService;
         this.eventRepository = eventRepository;
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('events:read')")
     public ResponseEntity<EventDto> getEventById(@PathVariable Long id) {
         Event event = eventService.getById(id);
         if (event == null) {
@@ -37,7 +38,6 @@ public class EventRestControllerV1 {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('events:read')")
     public ResponseEntity<List<EventDto>> getAll() {
         List<Event> eventList = eventService.getAll();
         if (eventList.isEmpty()) {
@@ -48,7 +48,6 @@ public class EventRestControllerV1 {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('events:write')")
     public ResponseEntity<Event> save(@RequestBody Event event) {
         if (event == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -58,7 +57,6 @@ public class EventRestControllerV1 {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('events:write')")
     public ResponseEntity<Event> update(@PathVariable Long id, @RequestBody Event event) {
         if (id == null || event == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -68,7 +66,6 @@ public class EventRestControllerV1 {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAuthority('events:write')")
     public ResponseEntity delete(@PathVariable Long id) {
         if (id == null) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

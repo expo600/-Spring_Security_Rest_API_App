@@ -4,13 +4,12 @@ package com.ryzhov_andrei.spring_security_rest_api_app.service.impl;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
-
 import com.ryzhov_andrei.spring_security_rest_api_app.model.File;
-import com.ryzhov_andrei.spring_security_rest_api_app.properties.S3Properties;
 import com.ryzhov_andrei.spring_security_rest_api_app.service.FileService;
-import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,31 +18,47 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.InputStream;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 
 @Service
 @Slf4j
 public class FileServiceImpl implements FileService {
-    private final AmazonS3 amazonS3;
-    private final S3Properties s3Properties;
+    private final AmazonS3 s3client;
+
 
     @Autowired
-    public FileServiceImpl(AmazonS3 amazonS3, S3Properties s3Properties) {
-        this.amazonS3 = amazonS3;
-        this.s3Properties = s3Properties;
+    public FileServiceImpl(AmazonS3 s3client) {
+        this.s3client = s3client;
+    }
+
+    public void createBucket() {
+        String bucketName = "expo600_bucket";
+
+        if (s3client.doesBucketExistV2(bucketName)) {
+            log.info("Bucket {} already exists, use a different name", bucketName);
+            return;
+        }
+        s3client.createBucket(bucketName);
+    }
+
+    public void listBuckets(){
+        List<Bucket> buckets = s3client.listBuckets();
+        log.info("buckets: {}", buckets);
     }
 
 
     @Override
+    @SneakyThrows
     public void upload(File file) {
-
+        String bucketName = "expo600_bucket";
         java.io.File newFile = new java.io.File(file.getLocation());
         file.setCreated(LocalDateTime.now());
         log.info("File Uploaded {}", file.getFileName());
 
         try{
-            amazonS3.putObject(s3Properties.getBucketName(), file.getFileName(), newFile);
+            s3client.putObject(bucketName, file.getFileName(), newFile);
         } catch (AmazonServiceException e) {
             throw new ResponseStatusException(HttpStatus.valueOf(e.getStatusCode()),
                     "Request processing failed at cloud platform", e);
@@ -53,12 +68,12 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-
     @Override
+    @SneakyThrows
     public InputStream download(File file) {
-
-        if (amazonS3.doesObjectExist(s3Properties.getBucketName(), file.getFileName())) {
-            S3Object s3Object = amazonS3.getObject(s3Properties.getBucketName(), file.getFileName());
+        String bucketName = "expo600_bucket";
+        if (s3client.doesObjectExist(bucketName, file.getFileName())) {
+            S3Object s3Object = s3client.getObject(bucketName, file.getFileName());
             log.info("File download {}", file.getFileName());
             return s3Object.getObjectContent();
         } else {
@@ -67,11 +82,10 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-
     @Override
     public Optional<String> listFiles() {
-        ObjectListing objectListing = amazonS3.listObjects(s3Properties.getBucketName());
-
+        String bucketName = "expo600_bucket";
+        ObjectListing objectListing = s3client.listObjects(bucketName);
         if (objectListing != null) {
             log.info("All files in the bucket");
             return Optional.of(String.valueOf(objectListing.getObjectSummaries()));
@@ -81,21 +95,11 @@ public class FileServiceImpl implements FileService {
         }
     }
 
-
     @Override
     public void deleteFile(String fileName) {
-        amazonS3.deleteObject(s3Properties.getBucketName(), fileName);
+        String bucketName = "expo600_bucket";
+        s3client.deleteObject(bucketName, fileName);
         log.info("Deleting a File {}", fileName);
     }
 
-    @Override
-    public File findByFileName(String name) {
-        S3Object s3Object = amazonS3.getObject(s3Properties.getBucketName(), file.getFileName());
-        return null;
-    }
-
-    @Override
-    public File findById(Long id) {
-        return null;
-    }
 }

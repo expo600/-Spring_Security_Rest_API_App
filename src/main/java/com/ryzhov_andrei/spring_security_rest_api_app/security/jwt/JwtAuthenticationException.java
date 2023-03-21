@@ -1,12 +1,25 @@
 package com.ryzhov_andrei.spring_security_rest_api_app.security.jwt;
 
+import lombok.Getter;
+import org.apache.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 
+@Getter
 public class JwtAuthenticationException extends AuthenticationException {
-    public JwtAuthenticationException(String msg,Throwable t) {
-        super(msg, t);
+    private HttpStatus httpStatus;
+
+
+    public JwtAuthenticationException(String msg, int scUnauthorized) {
+        super(msg);
     }
+
+    public JwtAuthenticationException(String msg, HttpStatus httpStatus) {
+        super(msg);
+        this.httpStatus = httpStatus;
+    }
+
     public JwtAuthenticationException(String msg) {
         super(msg);
     }
+
 }
