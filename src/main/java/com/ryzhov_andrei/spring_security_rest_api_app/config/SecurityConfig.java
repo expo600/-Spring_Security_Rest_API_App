@@ -19,7 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter{
 
     private static final String AUTH_ENDPOINT = "/api/v1/auth/**";
     private static final String USERS_ENDPOINT = "/api/v1/users/**";

@@ -14,5 +14,7 @@ public interface UserService extends GenericService<User,Long>{
 
    Optional<User> findByEmail(String email);
 
+
+
 }
 
